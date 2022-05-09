@@ -5,7 +5,7 @@
 typedef struct payload_t
 {
   short temperature;
-  boolean luminosite;
+  bool luminosite;
   unsigned short humidite;
   short temperature2;
   unsigned short gaz[8];
