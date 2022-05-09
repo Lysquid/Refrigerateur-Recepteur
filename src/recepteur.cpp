@@ -30,10 +30,18 @@ void setup()
 
 void loop(void)
 {
-  unsigned long wait = micros();
-  boolean timeout = false;
   while (radio.available())
   {
+    switch (radio.getPayloadSize())
+    {
+    case sizeof(payload_t):
+      Serial.println("Réception d'un paquet");
+      break;
+
+    default:
+      Serial.println(radio.getPayloadSize());
+      break;
+    }
     radio.read(&rcv_val, sizeof(rcv_val));
     Serial.println("");
     Serial.println(F("received value : "));
