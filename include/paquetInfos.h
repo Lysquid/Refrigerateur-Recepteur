@@ -1,6 +1,6 @@
 
-#ifndef __PACKET_H__
-#define __PACKET_H__
+#ifndef PAQUET_INFOS_H
+#define PAQUET_INFOS_H
 
 typedef struct paquetInfos_t
 {
