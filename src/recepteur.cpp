@@ -1,11 +1,16 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <RF24.h>
-#include <packet.h>
+#include <paquetCodebarre.h>
+#include <paquetInfos.h>
+#include <paquetPorte.h>
+
 
 RF24 radio(9, 10);
 uint8_t address[6] = {80, 0xCE, 0xCC, 0xCE, 0xCC}; // Adresse du pipe
-payload_t rcv_val;
+paquetCodebarre_t paquetCodebarre;
+paquetInfos_t paquetInfos;
+paquetPorte_t paquetPorte;
 long diff;
 long time;
 float val_temperature1;
@@ -34,38 +39,29 @@ void loop(void)
   {
     switch (radio.getPayloadSize()-1)
     {
-    case sizeof(payload_t):
+    case sizeof(paquetInfos_t):
       Serial.println("");
       Serial.println("Réception d'un paquet");
-      radio.read(&rcv_val, sizeof(rcv_val));      
+      radio.read(&paquetInfos, sizeof(paquetInfos));      
       // Serial.println(F("received value : "));
 
       // Température 1
       Serial.print("Température 1: ");
-      val_temperature1 = (float)rcv_val.temperature / 100.0;
+      val_temperature1 = (float)paquetInfos.temperature / 100.0;
       Serial.print(val_temperature1);
       Serial.println(" °C ");
 
-      // Luminosité
-      Serial.print("Luminosité : ");
-      if (rcv_val.luminosite)
-      {
-        Serial.println("Clair");
-      }
-      else
-      {
-        Serial.println("Sombre");
-      }
+      
 
       // Humidité
       Serial.print("Humidité : ");
-      val_humidite = (float)rcv_val.humidite / 100.0;
+      val_humidite = (float)paquetInfos.humidite / 100.0;
       Serial.print(val_humidite);
       Serial.println(" % ");
 
       // Température 2 (capteur humidité)
       Serial.print("Température 2: ");
-      val_temperature2 = (float)rcv_val.temperature2 / 100.0;
+      val_temperature2 = (float)paquetInfos.temperature2 / 100.0;
       Serial.print(val_temperature2);
       Serial.println(" °C ");
 
@@ -75,21 +71,45 @@ void loop(void)
       {
         Serial.print(liste_gaz[i]);
         Serial.print(" : ");
-        Serial.print(rcv_val.gaz[i]);
+        Serial.print(paquetInfos.gaz[i]);
         Serial.println(" ppm ");
       }
       break;
+      
+    // Code barre
+    case sizeof(paquetCodebarre_t):
+      
+      Serial.println("");
+      Serial.println("Réception d'un paquet");
+      radio.read(&paquetCodebarre, sizeof(paquetCodebarre));   
+
+      Serial.print("Code barre : ");
+      Serial.print(paquetCodebarre.codeBarre1);
+      Serial.println(paquetCodebarre.codeBarre2);
+
+    // Luminosité
+    case sizeof(paquetPorte_t):
+      Serial.println("");
+      Serial.println("Réception d'un paquet");
+      radio.read(&paquetPorte, sizeof(paquetPorte)); 
+
+      
+      Serial.print("Luminosité : ");
+      if (paquetPorte.porteOuverte)
+      {
+        Serial.println("Clair");
+      }
+      else
+      {
+        Serial.println("Sombre");
+      }  
 
     default:
-      Serial.println(radio.getPayloadSize());
-      Serial.println(sizeof(payload_t));
+      Serial.println(radio.getPayloadSize()-1);
       break;
     }
     
 
-    // Code barre
-    Serial.print("Code barre : ");
-    Serial.print(rcv_val.codeBarre1);
-    Serial.println(rcv_val.codeBarre2);
+    
   }
 }
