@@ -2,15 +2,12 @@
 #ifndef __PACKET_H__
 #define __PACKET_H__
 
-typedef struct payload_t
+typedef struct payloadInfos_t
 {
   short temperature;
-  boolean luminosite;
   unsigned short humidite;
   short temperature2;
   unsigned short gaz[8];
-  unsigned long codeBarre1;
-  unsigned long codeBarre2;
-} payload_t;
+} payloadInfos_t;
 
 #endif
