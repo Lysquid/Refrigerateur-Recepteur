@@ -32,58 +32,60 @@ void loop(void)
 {
   while (radio.available())
   {
-    switch (radio.getPayloadSize())
+    switch (radio.getPayloadSize()-1)
     {
     case sizeof(payload_t):
+      Serial.println("");
       Serial.println("Réception d'un paquet");
+      radio.read(&rcv_val, sizeof(rcv_val));      
+      // Serial.println(F("received value : "));
+
+      // Température 1
+      Serial.print("Température 1: ");
+      val_temperature1 = (float)rcv_val.temperature / 100.0;
+      Serial.print(val_temperature1);
+      Serial.println(" °C ");
+
+      // Luminosité
+      Serial.print("Luminosité : ");
+      if (rcv_val.luminosite)
+      {
+        Serial.println("Clair");
+      }
+      else
+      {
+        Serial.println("Sombre");
+      }
+
+      // Humidité
+      Serial.print("Humidité : ");
+      val_humidite = (float)rcv_val.humidite / 100.0;
+      Serial.print(val_humidite);
+      Serial.println(" % ");
+
+      // Température 2 (capteur humidité)
+      Serial.print("Température 2: ");
+      val_temperature2 = (float)rcv_val.temperature2 / 100.0;
+      Serial.print(val_temperature2);
+      Serial.println(" °C ");
+
+      // Gaz
+      Serial.println("Gaz : ");
+      for (int i = 0; i < 8; i++)
+      {
+        Serial.print(liste_gaz[i]);
+        Serial.print(" : ");
+        Serial.print(rcv_val.gaz[i]);
+        Serial.println(" ppm ");
+      }
       break;
 
     default:
       Serial.println(radio.getPayloadSize());
+      Serial.println(sizeof(payload_t));
       break;
     }
-    radio.read(&rcv_val, sizeof(rcv_val));
-    Serial.println("");
-    Serial.println(F("received value : "));
-
-    // Température 1
-    Serial.print("Température 1: ");
-    val_temperature1 = (float)rcv_val.temperature / 100.0;
-    Serial.print(val_temperature1);
-    Serial.println(" °C ");
-
-    // Luminosité
-    Serial.print("Luminosité : ");
-    if (rcv_val.luminosite)
-    {
-      Serial.println("Clair");
-    }
-    else
-    {
-      Serial.println("Sombre");
-    }
-
-    // Humidité
-    Serial.print("Humidité : ");
-    val_humidite = (float)rcv_val.humidite / 100.0;
-    Serial.print(val_humidite);
-    Serial.println(" % ");
-
-    // Température 2 (capteur humidité)
-    Serial.print("Température 2: ");
-    val_temperature2 = (float)rcv_val.temperature2 / 100.0;
-    Serial.print(val_temperature2);
-    Serial.println(" °C ");
-
-    // Gaz
-    Serial.println("Gaz : ");
-    for (int i = 0; i < 8; i++)
-    {
-      Serial.print(liste_gaz[i]);
-      Serial.print(" : ");
-      Serial.print(rcv_val.gaz[i]);
-      Serial.println(" ppm ");
-    }
+    
 
     // Code barre
     Serial.print("Code barre : ");
