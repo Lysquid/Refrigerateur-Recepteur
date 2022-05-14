@@ -15,6 +15,7 @@ String liste_gaz[8] = {"NH3", "CO", "NO2", "C3H8", "C4H10", "CH4", "H2", "C2H5OH
 void setup()
 {
   Serial.begin(115200); // Initialiser la communication série
+  Serial.println("\n");
   Serial.println("Debut setup");
 
   radio.begin();
