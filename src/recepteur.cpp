@@ -83,6 +83,7 @@ void loop(void)
       Serial.print("Code barre : ");
       Serial.print(paquetCodebarre.codeBarre1);
       Serial.println(paquetCodebarre.codeBarre2);
+      break;
     }
 
     // Luminosité
@@ -101,6 +102,7 @@ void loop(void)
       {
         Serial.println("fermée");
       }
+      break;
     }
 
     default:
