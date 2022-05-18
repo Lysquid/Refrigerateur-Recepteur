@@ -15,8 +15,6 @@ String liste_gaz[8] = {"NH3", "CO", "NO2", "C3H8", "C4H10", "CH4", "H2", "C2H5OH
 void setup()
 {
   Serial.begin(115200); // Initialiser la communication série
-  Serial.println("\n");
-  Serial.println("Debut setup");
 
   radio.begin();
   radio.setChannel(80);
@@ -26,49 +24,41 @@ void setup()
   radio.startListening();
   radio.setPALevel(RF24_PA_MAX);
   radio.enableDynamicPayloads();
-
-  Serial.println("Fin setup");
 }
 
 void loop(void)
 {
   while (radio.available())
   {
-    Serial.println();
 
     switch (radio.getDynamicPayloadSize())
     {
     case sizeof(paquetInfos_t):
     {
-      Serial.println("Réception d'un paquet infos");
       radio.read(&paquetInfos, sizeof(paquetInfos));
 
       // Température 1
-      Serial.print("Température 1:  ");
+      Serial.print("info;1;");
       float temperature = (float)paquetInfos.temperature / 100.0;
-      Serial.print(temperature);
-      Serial.println(" °C ");
+      Serial.println(temperature);
 
       // Humidité
-      Serial.print("Humidité : ");
+      Serial.print("info;2;");
       float humidite = (float)paquetInfos.humidite / 100.0;
-      Serial.print(humidite);
-      Serial.println(" % ");
+      Serial.println(humidite);
 
       // Température 2 (capteur humidité)
-      Serial.print("Température 2 : ");
+      Serial.print("info;11;");
       float temperature2 = (float)paquetInfos.temperature2 / 100.0;
-      Serial.print(temperature2);
-      Serial.println(" °C ");
+      Serial.println(temperature2);
 
       // Gaz
-      Serial.println("Gaz : ");
       for (int i = 0; i < 8; i++)
       {
-        Serial.print(liste_gaz[i]);
-        Serial.print(" : ");
-        Serial.print(paquetInfos.gaz[i]);
-        Serial.println(" ppm ");
+        Serial.print("info;");
+        Serial.print(3 + i);
+        Serial.print(";");
+        Serial.println(paquetInfos.gaz[i]);
       }
       break;
     }
@@ -77,10 +67,9 @@ void loop(void)
     case sizeof(paquetCodebarre_t):
     {
 
-      Serial.println("Réception d'un paquet code barre");
       radio.read(&paquetCodebarre, sizeof(paquetCodebarre));
 
-      Serial.print("Code barre : ");
+      Serial.print("codebarre;codebarre;");
       Serial.print(paquetCodebarre.codeBarre1);
       Serial.println(paquetCodebarre.codeBarre2);
       break;
@@ -90,31 +79,17 @@ void loop(void)
     case sizeof(paquetPorte_t):
     {
 
-      Serial.println("Réception d'un paquet porte");
       radio.read(&paquetPorte, sizeof(paquetPorte));
 
-      Serial.print("Porte ");
-      if (paquetPorte.porteOuverte)
-      {
-        Serial.println("ouverte");
-      }
-      else
-      {
-        Serial.println("fermée");
-      }
+      Serial.print("porte;luminosite;");
+      Serial.println(paquetPorte.porteOuverte);
+
       break;
     }
 
     default:
 
-      // Serial.println("Test");
-      // Serial.println(radio.getPayloadSize());
-      // Serial.println(radio.getDynamicPayloadSize());
-      // Serial.println(sizeof(paquetInfos_t));
-      // Serial.println(sizeof(paquetCodebarre_t));
-      // Serial.println(sizeof(paquetPorte_t));
-
-      delay(1000);
+      delay(100);
       break;
     }
   }
