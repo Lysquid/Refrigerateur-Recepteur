@@ -71,6 +71,16 @@ void loop(void)
 
       Serial.print("codebarre;0;");
       Serial.print(paquetCodebarre.codeBarre1);
+
+      String code2 = (String)paquetCodebarre.codeBarre2;
+      if (code2.length() <= 6)
+      {
+        for (unsigned int i = 0; i < 6 - code2.length(); i++)
+        {
+          Serial.print(0);
+        }
+      }      
+
       Serial.println(paquetCodebarre.codeBarre2);
       break;
     }
