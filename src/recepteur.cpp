@@ -69,7 +69,7 @@ void loop(void)
 
       radio.read(&paquetCodebarre, sizeof(paquetCodebarre));
 
-      Serial.print("codebarre;codebarre;");
+      Serial.print("codebarre;0;");
       Serial.print(paquetCodebarre.codeBarre1);
       Serial.println(paquetCodebarre.codeBarre2);
       break;
@@ -81,7 +81,7 @@ void loop(void)
 
       radio.read(&paquetPorte, sizeof(paquetPorte));
 
-      Serial.print("porte;luminosite;");
+      Serial.print("porte;0;");
       Serial.println(paquetPorte.porteOuverte);
 
       break;
